@@ -57,17 +57,21 @@ test(struct socket_server *ss) {
 	//sleep(5);
 	int u = uart_server_open(ss,100,"/dev/ttyS1");
 	if (u < 0) {
-		goto faile__;
+		goto fail__;
 	}
-	uart_server_set(ss, u, 115200, 0, 8, 1, 'N');
-	for (;;)
+	// sometimes set failure
+	int ok = uart_server_set(ss, u, 115200, 0, 8, 1, 'N');
+	if (ok)
 	{
-		char *buffer = malloc(5);
-		memcpy(buffer, "hello", 5);
-		uart_server_send(ss, u, buffer, 5);
-		sleep(5);
+		for (;;)
+		{
+			char *buffer = malloc(5);
+			memcpy(buffer, "hello", 5);
+			uart_server_send(ss, u, buffer, 5);
+			sleep(5);
+		}
 	}
-faile__:
+fail__:
 	socket_server_exit(ss);
 
 	pthread_join(pid, NULL); 

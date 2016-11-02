@@ -994,7 +994,7 @@ ctrl_cmd(struct socket_server *ss, struct socket_message *result) {
 		add_udp_socket(ss, (struct request_udp *)buffer);
 		return -1;
 	case 'R':
-		set_uart(ss, (struct request_setopt *)buffer);
+ 		set_uart(ss, (struct request_setopt *)buffer);
 		return -1;
 	default:
 		fprintf(stderr, "socket-server: Unknown ctrl %c.\n",type);
@@ -1625,6 +1625,7 @@ set_uart_mode(int fd, int speed, int flow_ctrl, int databits, int stopbits, int 
 	if (tcgetattr(fd, &options) != 0)
 	{
 		perror("SetupSerial 1");
+		printf("fd = %d\n", fd);
 		return -1;
 	}
 

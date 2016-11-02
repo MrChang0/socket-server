@@ -39,4 +39,3 @@ int64_t uart_server_send(struct socket_server *ss, int id, const void * buffer, 
 {
 	return socket_server_send(ss, id, buffer, sz);
 }
-
