@@ -1,4 +1,5 @@
 #include "socket_server.h"
+#include "uart_server.h"
 
 #include <pthread.h>
 #include <stdio.h>
@@ -36,23 +37,37 @@ _poll(void * ud) {
 	}
 }
 
+
 static void
 test(struct socket_server *ss) {
 	pthread_t pid;
 	pthread_create(&pid, NULL, _poll, ss);
 
-	int c = socket_server_connect(ss,100,"127.0.0.1",80);
-	printf("connecting %d\n",c);
-	int l = socket_server_listen(ss,200,"127.0.0.1",8888,32);
-	printf("listening %d\n",l);
-	socket_server_start(ss,201,l);
-	int b = socket_server_bind(ss,300,1);
-	printf("binding stdin %d\n",b);
-	int i;
-	for (i=0;i<100;i++) {
-		socket_server_connect(ss, 400+i, "127.0.0.1", 8888);
+	//int c = socket_server_connect(ss,100,"127.0.0.1",80);
+	//printf("connecting %d\n",c);
+	//int l = socket_server_listen(ss,200,"127.0.0.1",8888,32);
+	//printf("listening %d\n",l);
+	//socket_server_start(ss,201,l);
+	//int b = socket_server_bind(ss,300,1);
+	//printf("binding stdin %d\n",b);
+	//int i;
+	//for (i=0;i<100;i++) {
+	//	socket_server_connect(ss, 400+i, "127.0.0.1", 8888);
+	//}
+	//sleep(5);
+	int u = uart_server_open(ss,100,"/dev/ttyS1");
+	if (u < 0) {
+		goto faile__;
 	}
-	sleep(5);
+	uart_server_set(ss, u, 115200, 0, 8, 1, 'N');
+	for (;;)
+	{
+		char *buffer = malloc(5);
+		memcpy(buffer, "hello", 5);
+		uart_server_send(ss, u, buffer, 5);
+		sleep(5);
+	}
+faile__:
 	socket_server_exit(ss);
 
 	pthread_join(pid, NULL); 
