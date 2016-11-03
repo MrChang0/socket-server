@@ -37,7 +37,6 @@ _poll(void * ud) {
 	}
 }
 
-
 static void
 test(struct socket_server *ss) {
 	pthread_t pid;
@@ -59,17 +58,20 @@ test(struct socket_server *ss) {
 	if (u < 0) {
 		goto fail__;
 	}
+	sleep(1);
 	// sometimes set failure
 	int ok = uart_server_set(ss, u, 115200, 0, 8, 1, 'N');
 	if (ok)
 	{
-		for (;;)
+		int count = 5;
+		while (count--)
 		{
 			char *buffer = malloc(5);
 			memcpy(buffer, "hello", 5);
 			uart_server_send(ss, u, buffer, 5);
 			sleep(5);
 		}
+		uart_server_close(ss, 200, u);
 	}
 fail__:
 	socket_server_exit(ss);

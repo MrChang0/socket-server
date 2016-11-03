@@ -1,8 +1,10 @@
 #include "uart_server.h"
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+
 static int
 do_open(const char * port)
 {
@@ -28,7 +30,6 @@ uart_server_open(struct socket_server *ss, uintptr_t opaque, const char *port)
 
 	return socket_server_bind(ss, opaque, fd);
 }
-	
 
 void uart_server_close(struct socket_server *ss, uintptr_t opaque, int id)
 {
